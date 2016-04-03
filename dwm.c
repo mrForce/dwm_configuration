@@ -81,6 +81,10 @@ typedef struct {
 	void (*func)(const Arg *arg);
 	const Arg arg;
 } Button;
+typedef struct MouseLocation;
+struct MouseLocation {
+  int x, y;
+}
 
 typedef struct Monitor Monitor;
 typedef struct Client Client;
@@ -96,7 +100,8 @@ struct Client {
 	Client *next;
 	Client *snext;
 	Monitor *mon;
-	Window win;
+  Window win;
+  MouseLocation* mLoc;
 };
 
 typedef struct {
@@ -1050,6 +1055,10 @@ void
 manage(Window w, XWindowAttributes *wa)
 {
 	Client *c, *t = NULL;
+	/* Initialize x and y to -1 to signal that the mouse isn't necessarily in the window */
+	MouseLocation* mLoc;
+	mLoc->x = -1;
+	mLoc->y = -1;
 	Window trans = None;
 	XWindowChanges wc;
 
@@ -1069,7 +1078,7 @@ manage(Window w, XWindowAttributes *wa)
 	c->w = c->oldw = wa->width;
 	c->h = c->oldh = wa->height;
 	c->oldbw = wa->border_width;
-
+	c->mLoc = loc;
 	if (c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
 		c->x = c->mon->mx + c->mon->mw - WIDTH(c);
 	if (c->y + HEIGHT(c) > c->mon->my + c->mon->mh)
