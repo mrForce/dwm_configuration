@@ -4,6 +4,14 @@ Here's the useful part:
 
 If I focus on a different window using my keyboard, the mouse moves to the center of the new window. 
 
+
+This also includes the gapless grid layout; you can use it by pressing META-g
+
+This config uses the windows key as META.
+
+It uses Terminator for the terminal.
+
+
 dwm - dynamic window manager
 ============================
 dwm is an extremely fast, small, and dynamic window manager for X.
