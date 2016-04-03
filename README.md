@@ -12,6 +12,8 @@ This is what it looks like:
 ![Alt text](http://i.giphy.com/3o85g9H2yx8msdNu12.gif)
 
 
+See how the location of the mouse pointer gets saved when you change focus with the keyboard, and is restored?
+
 This also includes the gapless grid layout; you can use it by pressing META-g
 
 This config uses the windows key as META.
