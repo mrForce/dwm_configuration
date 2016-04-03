@@ -874,9 +874,9 @@ focusmon(const Arg *arg)
        
 	Client *c = m->sel;
 	if(c){
-	  if(c->mLoc.x == -1){
+	  if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
 	    XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
-	  }else if(c->mLoc.width == c->w && c->mLoc.height == c->h){
+	  }else {
 	    XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
 	  }
 	}
