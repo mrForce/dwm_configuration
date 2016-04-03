@@ -104,7 +104,7 @@ struct Client {
 	Client *snext;
 	Monitor *mon;
   Window win;
-  MouseLocation* mLoc;
+  MouseLocation mLoc;
 };
 
 typedef struct {
@@ -871,6 +871,25 @@ focusstack(const Arg *arg)
 	Client *c = NULL, *i;
 	if (!selmon->sel)
 		return;
+	/*
+	    We need to take the current window in focus, and store the coordinates of the mouse in it.
+	   */
+	  if(!selmon->sel->win){
+
+	  }else{
+	    int rootX, rootY, x, y;
+	    unsigned int mask;
+	    Window w, w_two;
+	    Bool result = XQueryPointer(dpy, selmon->sel->win, &w, &w_two, &rootX, &rootY, &x, &y, &mask);
+	    if(result == True){
+	      selmon->sel->mLoc.x = x;
+	      selmon->sel->mLoc.y = y;
+	      selmon->sel->mLoc.width = selmon->sel->w;
+	      selmon->sel->mLoc.height = selmon->sel->h;
+	    }else{
+	      selmon->sel->mLoc.x = -1;
+	    }
+	  }
 	if (arg->i > 0) {
 		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
 		if (!c)
@@ -885,30 +904,12 @@ focusstack(const Arg *arg)
 					c = i;
 	}
 	if (c) {
-	  /*
-	    We need to take the current window in focus, and store the coordinates of the mouse in it.
-	   */
-	  if(!selmon->sel->win){
-
-	  }else{
-	    int x, y;
-	    int x_ignore, y_ignore;
-	    unsigned int mReturn;
-	    Bool result = XQueryPointer(dpy, selmon->sel->win, 0, 0, &x_ignore, &y_ignore, &x, &y, &mReturn);
-	    if(result == True){
-	      selmon->sel->mLoc->x = x;
-	      selmon->sel->mLoc->y = y;
-	      selmon->sel->mLoc->width = selmon->sel->w;
-	      selmon->sel->mLoc->height = selmon->sel->h;
-	    }else{
-	      selmon->sel->mLoc->x = -1;
-	    }
-	  }
+	  
 		focus(c);
-		if(c->mLoc->x == -1){
-		  XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);  
-		}else if(c->mLoc->width == c->w && c->mLoc->height == c->h) {
-		  XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc->x, c->mLoc->y);
+		if(selmon->sel->mLoc.x == -1){
+		  XWarpPointer(dpy, 0, selmon->sel->win, 0, 0, 0, 0, selmon->sel->w/2, selmon->sel->h/2);  
+		}else if(selmon->sel->mLoc.width == selmon->sel->w && selmon->sel->mLoc.height == selmon->sel->h) {
+		  XWarpPointer(dpy, 0, selmon->sel->win, 0, 0, 0, 0, selmon->sel->mLoc.x, selmon->sel->mLoc.y);
 		}
 		restack(selmon);
 	}
@@ -1080,9 +1081,8 @@ manage(Window w, XWindowAttributes *wa)
 {
 	Client *c, *t = NULL;
 	/* Initialize x and y to -1 to signal that the mouse isn't necessarily in the window */
-	MouseLocation* mLoc = ecalloc(1, sizeof(MouseLocation)) ;
-	mLoc->x = -1;
-	mLoc->y = -1;
+
+
 	Window trans = None;
 	XWindowChanges wc;
 
@@ -1102,7 +1102,12 @@ manage(Window w, XWindowAttributes *wa)
 	c->w = c->oldw = wa->width;
 	c->h = c->oldh = wa->height;
 	c->oldbw = wa->border_width;
-	c->mLoc = mLoc;
+
+	c->mLoc.x = -1;
+	c->mLoc.y = -1;
+	c->mLoc.width = -1;
+	c->mLoc.height = -1;
+
 	if (c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
 		c->x = c->mon->mx + c->mon->mw - WIDTH(c);
 	if (c->y + HEIGHT(c) > c->mon->my + c->mon->mh)
