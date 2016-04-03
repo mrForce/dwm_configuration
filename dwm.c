@@ -81,10 +81,13 @@ typedef struct {
 	void (*func)(const Arg *arg);
 	const Arg arg;
 } Button;
-typedef struct MouseLocation;
+typedef struct MouseLocation MouseLocation;
 struct MouseLocation {
-  int x, y;
-}
+  int x;
+  int y;
+  int width;
+  int height;
+};
 
 typedef struct Monitor Monitor;
 typedef struct Client Client;
@@ -866,7 +869,6 @@ void
 focusstack(const Arg *arg)
 {
 	Client *c = NULL, *i;
-
 	if (!selmon->sel)
 		return;
 	if (arg->i > 0) {
@@ -883,9 +885,31 @@ focusstack(const Arg *arg)
 					c = i;
 	}
 	if (c) {
-		focus(c);
-				XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);  
+	  /*
+	    We need to take the current window in focus, and store the coordinates of the mouse in it.
+	   */
+	  if(!selmon->sel->win){
 
+	  }else{
+	    int x, y;
+	    int x_ignore, y_ignore;
+	    unsigned int mReturn;
+	    Bool result = XQueryPointer(dpy, selmon->sel->win, 0, 0, &x_ignore, &y_ignore, &x, &y, &mReturn);
+	    if(result == True){
+	      selmon->sel->mLoc->x = x;
+	      selmon->sel->mLoc->y = y;
+	      selmon->sel->mLoc->width = selmon->sel->w;
+	      selmon->sel->mLoc->height = selmon->sel->h;
+	    }else{
+	      selmon->sel->mLoc->x = -1;
+	    }
+	  }
+		focus(c);
+		if(c->mLoc->x == -1){
+		  XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);  
+		}else if(c->mLoc->width == c->w && c->mLoc->height == c->h) {
+		  XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc->x, c->mLoc->y);
+		}
 		restack(selmon);
 	}
 }
@@ -1056,7 +1080,7 @@ manage(Window w, XWindowAttributes *wa)
 {
 	Client *c, *t = NULL;
 	/* Initialize x and y to -1 to signal that the mouse isn't necessarily in the window */
-	MouseLocation* mLoc;
+	MouseLocation* mLoc = ecalloc(1, sizeof(MouseLocation)) ;
 	mLoc->x = -1;
 	mLoc->y = -1;
 	Window trans = None;
@@ -1078,7 +1102,7 @@ manage(Window w, XWindowAttributes *wa)
 	c->w = c->oldw = wa->width;
 	c->h = c->oldh = wa->height;
 	c->oldbw = wa->border_width;
-	c->mLoc = loc;
+	c->mLoc = mLoc;
 	if (c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
 		c->x = c->mon->mx + c->mon->mw - WIDTH(c);
 	if (c->y + HEIGHT(c) > c->mon->my + c->mon->mh)
