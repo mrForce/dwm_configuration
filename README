@@ -6,6 +6,9 @@ on window B. The mouse pointer will move to the center of B (this is part of my 
 Now, suppose you use your keyboard to set the focus on window A. It will move the mouse pointer back to point (x1, y1). If you focus on B using the keyboard, it will move the mouse to location (x3, y3).
 
 
+This is what it looks like:
+
+![alt tag](http://gph.is/233liQ9)
 
 
 This also includes the gapless grid layout; you can use it by pressing META-g
