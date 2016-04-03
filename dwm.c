@@ -927,15 +927,19 @@ focusstack(const Arg *arg)
 				if (ISVISIBLE(i))
 					c = i;
 	}
-	if (c) {
-	  
-		focus(c);
-		if(selmon->sel->mLoc.x == -1){
-		  XWarpPointer(dpy, 0, selmon->sel->win, 0, 0, 0, 0, selmon->sel->w/2, selmon->sel->h/2);  
-		}else if(selmon->sel->mLoc.width == selmon->sel->w && selmon->sel->mLoc.height == selmon->sel->h) {
-		  XWarpPointer(dpy, 0, selmon->sel->win, 0, 0, 0, 0, selmon->sel->mLoc.x, selmon->sel->mLoc.y);
-		}
-		restack(selmon);
+	if(c){
+	  focus(c);
+	 
+	  restack(selmon);
+	  c = selmon->sel;
+	  	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+			    /*
+	  if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
+	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+	  }else {
+	        XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, 10, 20);
+	 } 
+			    */
 	}
 }
 

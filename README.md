@@ -1,3 +1,6 @@
+
+NOTICE: I discovered a critical bug with saving the state of the mouse pointer (this is more complicated than I initially thought). Give it another few days before you try to apply what I've done.
+
 This is my customized version of the DWM window manager.
 
 Suppose you have two windows, A and B. These are completely new windows. You have you mouse point in A, at location (x1, y1). You use the keyboard to set the focus
