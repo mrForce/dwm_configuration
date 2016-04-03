@@ -852,9 +852,36 @@ focusmon(const Arg *arg)
 		return;
 	if ((m = dirtomon(arg->i)) == selmon)
 		return;
+	
+	if(!selmon->sel->win){
+
+	  }else{
+	    int rootX, rootY, x, y;
+	    unsigned int mask;
+	    Window w, w_two;
+	    
+	    Bool result = XQueryPointer(dpy, selmon->sel->win, &w, &w_two, &rootX, &rootY, &x, &y, &mask);
+	    if(result == True){
+	      selmon->sel->mLoc.x = x;
+	      
+	      selmon->sel->mLoc.y = y;
+	      
+	      selmon->sel->mLoc.width = selmon->sel->w;
+	      selmon->sel->mLoc.height = selmon->sel->h;
+	      
+	    }else{
+	      selmon->sel->mLoc.x = -1;
+	    }
+	    
+	}
+       
 	Client *c = m->sel;
 	if(c){
-	  XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+	  if(c->mLoc.x == -1){
+	    XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+	  }else if(c->mLoc.width == c->w && c->mLoc.height == c->h){
+	    XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
+	  }
 	}
 	unfocus(selmon->sel, 0); /* s/1/0/ fixes input focus issues
 					in gedit and anjuta */
