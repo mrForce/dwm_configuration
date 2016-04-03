@@ -1,8 +1,11 @@
 This is my customized version of the DWM window manager.
 
-Here's the useful part:
+Suppose you have two windows, A and B. These are completely new windows. You have you mouse point in A, at location (x1, y1). You use the keyboard to set the focus
+on window B. The mouse pointer will move to the center of B (this is part of my modification to DWM). Suppose this is at (x2, y2). You move the mouse to a new location in window B, at location (x3, y3).
 
-If I focus on a different window using my keyboard, the mouse moves to the center of the new window. 
+Now, suppose you use your keyboard to set the focus on window A. It will move the mouse pointer back to point (x1, y1). If you focus on B using the keyboard, it will move the mouse to location (x3, y3).
+
+
 
 
 This also includes the gapless grid layout; you can use it by pressing META-g
