@@ -1,3 +1,9 @@
+This is my customized version of the DWM window manager.
+
+Here's the useful part:
+
+If I focus on a different window using my keyboard, the mouse moves to the center of the new window. 
+
 dwm - dynamic window manager
 ============================
 dwm is an extremely fast, small, and dynamic window manager for X.
