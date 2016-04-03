@@ -844,10 +844,17 @@ focusmon(const Arg *arg)
 		return;
 	if ((m = dirtomon(arg->i)) == selmon)
 		return;
+	Client *c = m->sel;
+	if(c){
+	  XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+	}
 	unfocus(selmon->sel, 0); /* s/1/0/ fixes input focus issues
 					in gedit and anjuta */
 	selmon = m;
 	focus(NULL);
+
+
+
 }
 
 void
