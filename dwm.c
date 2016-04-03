@@ -853,9 +853,8 @@ focusmon(const Arg *arg)
 	if ((m = dirtomon(arg->i)) == selmon)
 		return;
 	
-	if(!selmon->sel->win){
+	if(selmon->sel && selmon->sel->win){
 
-	  }else{
 	    int rootX, rootY, x, y;
 	    unsigned int mask;
 	    Window w, w_two;
@@ -869,8 +868,6 @@ focusmon(const Arg *arg)
 	      selmon->sel->mLoc.width = selmon->sel->w;
 	      selmon->sel->mLoc.height = selmon->sel->h;
 	      
-	    }else{
-	      selmon->sel->mLoc.x = -1;
 	    }
 	    
 	}
