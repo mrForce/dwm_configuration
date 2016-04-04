@@ -2125,12 +2125,17 @@ view(const Arg *arg)
 	if ((arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
 	if(selmon->sel && selmon->sel->win){
+	  /*
+	    Grab the position of the mouse, and save it to the client if the mouse is over the currently focused client.
+
+	    If the mouse is NOT over the currently focused client, then I'm not going to save its position.
+	   */
 	int rootX, rootY, x, y;
 	unsigned int mask;
 	Window wRoot, wChild;
 	Bool result = XQueryPointer(dpy, selmon->sel->win, &wRoot, &wChild, &rootX, &rootY, &x, &y, &mask);
 	    /*
-	      We need to make sure the mouse is on the currently selected window. Compare the (x, y) with the height and width.
+	      We need to make sure the mouse is on the currently focused  window. Compare the (x, y) with the height and width.
 
 	     */
 	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
