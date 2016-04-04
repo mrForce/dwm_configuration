@@ -2121,13 +2121,29 @@ I think this is where the changing tags action occurs
 void
 view(const Arg *arg)
 {
+
 	if ((arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
+            
 	selmon->seltags ^= 1; /* toggle sel tagset */
 	if (arg->ui & TAGMASK)
 		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
 	focus(NULL);
 	arrange(selmon);
+	/*
+	  Whichever window is now in focus, move the mouse.
+	 */
+	if(selmon->sel){
+
+	
+	Client* c = selmon->sel;
+
+	if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
+	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+	  }else {
+	        XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
+	}
+	}
 }
 
 Client *
