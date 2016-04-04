@@ -860,7 +860,7 @@ focusmon(const Arg *arg)
 	    Window w, w_two;
 	    
 	    Bool result = XQueryPointer(dpy, selmon->sel->win, &w, &w_two, &rootX, &rootY, &x, &y, &mask);
-	    if(result == True){
+	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
 	      selmon->sel->mLoc.x = x;
 	      
 	      selmon->sel->mLoc.y = y;
@@ -874,11 +874,11 @@ focusmon(const Arg *arg)
        
 	Client *c = m->sel;
 	if(c){
-	  //	  if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
+	   if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
 	    XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
-	    // }else {
-	    // XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
-	    // }
+	    }else {
+	     XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
+	     }
 	}
 	unfocus(selmon->sel, 0); /* s/1/0/ fixes input focus issues
 					in gedit and anjuta */
@@ -903,16 +903,20 @@ focusstack(const Arg *arg)
 	  }else{
 	    int rootX, rootY, x, y;
 	    unsigned int mask;
-	    Window w, w_two;
-	    Bool result = XQueryPointer(dpy, selmon->sel->win, &w, &w_two, &rootX, &rootY, &x, &y, &mask);
-	    if(result == True){
+	    Window wRoot, wChild;
+	    Bool result = XQueryPointer(dpy, selmon->sel->win, &wRoot, &wChild, &rootX, &rootY, &x, &y, &mask);
+	    /*
+	      We need to make sure the mouse is on the currently selected window. Compare the (x, y) with the height and width.
+
+	     */
+	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
 	      selmon->sel->mLoc.x = x;
 	      selmon->sel->mLoc.y = y;
 	      selmon->sel->mLoc.width = selmon->sel->w;
 	      selmon->sel->mLoc.height = selmon->sel->h;
-	    }else{
-	      selmon->sel->mLoc.x = -1;
 	    }
+
+
 	  }
 	if (arg->i > 0) {
 		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
@@ -932,14 +936,13 @@ focusstack(const Arg *arg)
 	 
 	  restack(selmon);
 	  c = selmon->sel;
-	  	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
-			    /*
+
 	  if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
 	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
 	  }else {
-	        XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, 10, 20);
+	        XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
 	 } 
-			    */
+	
 	}
 }
 
