@@ -860,7 +860,7 @@ focusmon(const Arg *arg)
 	    Window w, w_two;
 	    
 	    Bool result = XQueryPointer(dpy, selmon->sel->win, &w, &w_two, &rootX, &rootY, &x, &y, &mask);
-	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
+	    if(result == True && x <= selmon->sel->w && x >= 0 && y <= selmon->sel->h && y >= 0){
 	      selmon->sel->mLoc.x = x;
 	      
 	      selmon->sel->mLoc.y = y;
@@ -909,7 +909,7 @@ focusstack(const Arg *arg)
 	      We need to make sure the mouse is on the currently selected window. Compare the (x, y) with the height and width.
 
 	     */
-	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
+	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h && x >= 0 && y >= 0){
 	      selmon->sel->mLoc.x = x;
 	      selmon->sel->mLoc.y = y;
 	      selmon->sel->mLoc.width = selmon->sel->w;
@@ -2138,7 +2138,7 @@ view(const Arg *arg)
 	      We need to make sure the mouse is on the currently focused  window. Compare the (x, y) with the height and width.
 
 	     */
-	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
+	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h && x >= 0 && y >= 0){
 	      selmon->sel->mLoc.x = x;
 	      selmon->sel->mLoc.y = y;
 	      selmon->sel->mLoc.width = selmon->sel->w;
