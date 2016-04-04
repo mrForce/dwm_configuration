@@ -2114,6 +2114,10 @@ updatewmhints(Client *c)
 	}
 }
 
+
+/*
+I think this is where the changing tags action occurs
+ */
 void
 view(const Arg *arg)
 {
