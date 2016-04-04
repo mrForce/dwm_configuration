@@ -2124,7 +2124,22 @@ view(const Arg *arg)
 
 	if ((arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
-            
+	if(selmon->sel && selmon->sel->win){
+	int rootX, rootY, x, y;
+	unsigned int mask;
+	Window wRoot, wChild;
+	Bool result = XQueryPointer(dpy, selmon->sel->win, &wRoot, &wChild, &rootX, &rootY, &x, &y, &mask);
+	    /*
+	      We need to make sure the mouse is on the currently selected window. Compare the (x, y) with the height and width.
+
+	     */
+	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h){
+	      selmon->sel->mLoc.x = x;
+	      selmon->sel->mLoc.y = y;
+	      selmon->sel->mLoc.width = selmon->sel->w;
+	      selmon->sel->mLoc.height = selmon->sel->h;
+	    }
+	}
 	selmon->seltags ^= 1; /* toggle sel tagset */
 	if (arg->ui & TAGMASK)
 		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
