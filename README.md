@@ -1,5 +1,5 @@
+Notice: This is very much alpha quality software. Be careful.
 
-NOTICE: I discovered a critical bug with saving the state of the mouse pointer (this is more complicated than I initially thought). Give it another few days before you try to apply what I've done.
 
 This is my customized version of the DWM window manager.
 
