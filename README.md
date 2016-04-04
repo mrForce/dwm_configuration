@@ -15,7 +15,7 @@ This is what it looks like:
 ![Alt text](http://i.giphy.com/3o85g9H2yx8msdNu12.gif)
 
 
-See how the location of the mouse pointer gets saved when you change focus with the keyboard, and is restored? These changes are made in the dwm.c file. I made a new struct called MouseLocation, and modified the Client struct. I also added things to the focusmon and focusstack functions.
+See how the location of the mouse pointer gets saved when you change focus with the keyboard, and is restored? These changes are made in the dwm.c file. I made a new struct called MouseLocation, and modified the Client struct. I also added things to the focusmon, focusstack, and view functions.
 
 This also includes the gapless grid layout; you can use it by pressing META-g
 
