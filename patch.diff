@@ -1,0 +1,148 @@
+83a84,90
+> typedef struct MouseLocation MouseLocation;
+> struct MouseLocation {
+>   int x;
+>   int y;
+>   int width;
+>   int height;
+> };
+99c106,107
+< 	Window win;
+---
+>   Window win;
+>   MouseLocation mLoc;
+801a810,811
+> 
+>   
+816a827
+> 		
+843a855,882
+> 	
+> 	if(selmon->sel && selmon->sel->win){
+> 
+> 	    int rootX, rootY, x, y;
+> 	    unsigned int mask;
+> 	    Window w, w_two;
+> 	    
+> 	    Bool result = XQueryPointer(dpy, selmon->sel->win, &w, &w_two, &rootX, &rootY, &x, &y, &mask);
+> 	    if(result == True && x <= selmon->sel->w && x >= 0 && y <= selmon->sel->h && y >= 0){
+> 	      selmon->sel->mLoc.x = x;
+> 	      
+> 	      selmon->sel->mLoc.y = y;
+> 	      
+> 	      selmon->sel->mLoc.width = selmon->sel->w;
+> 	      selmon->sel->mLoc.height = selmon->sel->h;
+> 	      
+> 	    }
+> 	    
+> 	}
+>        
+> 	Client *c = m->sel;
+> 	if(c){
+> 	   if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
+> 	    XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+> 	    }else {
+> 	     XWarpPointer(dpy, 0, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
+> 	     }
+> 	}
+847a887,889
+> 
+> 
+> 
+854d895
+< 
+856a898,920
+> 	/*
+> 	    We need to take the current window in focus, and store the coordinates of the mouse in it.
+> 	   */
+> 	  if(!selmon->sel->win){
+> 
+> 	  }else{
+> 	    int rootX, rootY, x, y;
+> 	    unsigned int mask;
+> 	    Window wRoot, wChild;
+> 	    Bool result = XQueryPointer(dpy, selmon->sel->win, &wRoot, &wChild, &rootX, &rootY, &x, &y, &mask);
+> 	    /*
+> 	      We need to make sure the mouse is on the currently selected window. Compare the (x, y) with the height and width.
+> 
+> 	     */
+> 	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h && x >= 0 && y >= 0){
+> 	      selmon->sel->mLoc.x = x;
+> 	      selmon->sel->mLoc.y = y;
+> 	      selmon->sel->mLoc.width = selmon->sel->w;
+> 	      selmon->sel->mLoc.height = selmon->sel->h;
+> 	    }
+> 
+> 
+> 	  }
+870,872c934,945
+< 	if (c) {
+< 		focus(c);
+< 		restack(selmon);
+---
+> 	if(c){
+> 	  focus(c);
+> 	 
+> 	  restack(selmon);
+> 	  c = selmon->sel;
+> 
+> 	  if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
+> 	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+> 	  }else {
+> 	        XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
+> 	 } 
+> 	
+1040a1114,1116
+> 	/* Initialize x and y to -1 to signal that the mouse isn't necessarily in the window */
+> 
+> 
+1060a1137,1141
+> 	c->mLoc.x = -1;
+> 	c->mLoc.y = -1;
+> 	c->mLoc.width = -1;
+> 	c->mLoc.height = -1;
+> 
+2035a2117,2120
+> 
+> /*
+> I think this is where the changing tags action occurs
+>  */
+2038a2124
+> 
+2040a2127,2147
+> 	if(selmon->sel && selmon->sel->win){
+> 	  /*
+> 	    Grab the position of the mouse, and save it to the client if the mouse is over the currently focused client.
+> 
+> 	    If the mouse is NOT over the currently focused client, then I'm not going to save its position.
+> 	   */
+> 	int rootX, rootY, x, y;
+> 	unsigned int mask;
+> 	Window wRoot, wChild;
+> 	Bool result = XQueryPointer(dpy, selmon->sel->win, &wRoot, &wChild, &rootX, &rootY, &x, &y, &mask);
+> 	    /*
+> 	      We need to make sure the mouse is on the currently focused  window. Compare the (x, y) with the height and width.
+> 
+> 	     */
+> 	    if(result == True && x <= selmon->sel->w && y <= selmon->sel->h && x >= 0 && y >= 0){
+> 	      selmon->sel->mLoc.x = x;
+> 	      selmon->sel->mLoc.y = y;
+> 	      selmon->sel->mLoc.width = selmon->sel->w;
+> 	      selmon->sel->mLoc.height = selmon->sel->h;
+> 	    }
+> 	}
+2045a2153,2166
+> 	/*
+> 	  Whichever window is now in focus, move the mouse.
+> 	 */
+> 	if(selmon->sel){
+> 
+> 	
+> 	Client* c = selmon->sel;
+> 
+> 	if(c->mLoc.x == -1 || c->mLoc.width != c->w || c->mLoc.height != c->h){
+> 	    	    XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w/2, c->h/2);
+> 	  }else {
+> 	        XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->mLoc.x, c->mLoc.y);
+> 	}
+> 	}
